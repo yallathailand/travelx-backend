@@ -1,0 +1,46 @@
+const express = require("express");
+const router = express.Router();
+
+let bookings = [
+  { id: "TX-001", userId: "user_1", tourId: "1", tourTitle: "Phi Phi Islands Full Day Tour", date: "2026-04-18", pax: 4, amount: 10000, status: "confirmed", supplier: "Sea Explorer Co.", createdAt: "2026-04-14T09:23:00Z" },
+  { id: "TX-002", userId: "user_2", tourId: "3", tourTitle: "Phuket Airport Transfer", date: "2026-04-15", pax: 2, amount: 800, status: "pending_supplier", supplier: "Quick Ride", createdAt: "2026-04-14T10:05:00Z" },
+];
+
+router.get("/", (req, res) => {
+  const { status, userId } = req.query;
+  let result = [...bookings];
+  if (status) result = result.filter(b => b.status === status);
+  if (userId) result = result.filter(b => b.userId === userId);
+  res.json({ data: result, total: result.length });
+});
+
+router.get("/:id", (req, res) => {
+  const booking = bookings.find(b => b.id === req.params.id);
+  if (!booking) return res.status(404).json({ error: "Booking not found" });
+  res.json({ data: booking });
+});
+
+router.post("/", (req, res) => {
+  const { tourId, tourTitle, date, pax, amount, supplier, userId } = req.body;
+  if (!tourId || !date || !pax || !amount) {
+    return res.status(400).json({ error: "Missing required fields" });
+  }
+  const newBooking = {
+    id: `TX-${String(bookings.length + 1).padStart(3, "0")}`,
+    userId: userId || "guest",
+    tourId, tourTitle, date, pax, amount,
+    status: "awaiting_payment",
+    supplier: supplier || "TBD",
+    createdAt: new Date().toISOString(),
+  };
+  bookings.push(newBooking);
+  res.status(201).json({ data: newBooking });
+});
+
+router.patch("/:id/status", (req, res) => {
+  const { status } = req.body;
+  const booking = bookings.find(b => b.id === req.params.id);
+  if (!booking) return res.status(404).json({ error: "Booking not found" });
+  booking.status = status;
+  res.json({ data: booking });
+});

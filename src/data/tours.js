@@ -1,0 +1,443 @@
+// src/data/tours.js
+// ─────────────────────────────────────────────────────────────────────────────
+//  Client-side tour catalogue.
+//  Used by TourDetailsWrapper to resolve photo_folder slugs → numeric IDs
+//  without an extra API round-trip.
+//
+//  Field keys match the backend API format so normalizeTour() in api/tours.js
+//  maps them correctly:
+//    id            → numeric ID
+//    n             → title
+//    d             → destination / location
+//    pa            → adult price
+//    pa_original   → original (crossed-out) price
+//    pc            → child price
+//    photo_folder  → URL slug (unique kebab-case)
+//    photos        → array of image URLs
+//    desc          → description
+//    sup           → supplier name
+//    q             → quality tier
+//    dur           → duration string
+//    tm            → departure time
+//    at            → activity type
+//    adr           → adrenaline level
+//    ch            → children age range
+//    pax           → group size
+//    stp           → stops
+//    lun           → lunch included?
+//    stb           → stability
+//    bv            → boat view
+//    wa            → water activities
+//    lt            → longtail included?
+//    np            → national park fee note (or null)
+//    rating        → average star rating
+//    reviews       → total review count
+// ─────────────────────────────────────────────────────────────────────────────
+
+const TOURS = [
+  // ── PHUKET ────────────────────────────────────────────────────────────────
+  {
+    id: 1,
+    n: "Phi Phi Islands Full Day Tour",
+    d: "Phuket",
+    pa: 2500, pa_original: 3200, pc: 1200,
+    photo_folder: "phi-phi-islands-full-day-tour",
+    photos: [
+      "https://images.unsplash.com/photo-1559827291-72ee739d0d9a?w=1200&q=80",
+      "https://images.unsplash.com/photo-1506905925346-21bda4d32df4?w=800",
+    ],
+    desc: "The ultimate Phi Phi Islands speedboat day trip from Phuket. Visit the famous Maya Bay, snorkel at Shark Point, explore Phi Phi Don village, and stop at Monkey Beach. Hotel pickup and buffet lunch included.",
+    sup: "Sea Explorer Co.",
+    q: "Standard", dur: "Full Day", tm: "07:30", at: "Boat Tour",
+    adr: "Medium", ch: "5+", pax: "Up to 35",
+    stp: "Maya Bay, Monkey Beach, Phi Phi Don, Shark Point",
+    lun: "Buffet lunch included", stb: "Speedboat", bv: "Open deck",
+    wa: "Snorkeling, swimming", lt: "None",
+    np: "National park fee ฿400 (payable on-site)", rating: 4.8, reviews: 534,
+  },
+  {
+    id: 2,
+    n: "James Bond Island Tour",
+    d: "Phang Nga",
+    pa: 1800, pa_original: 2400, pc: 900,
+    photo_folder: "james-bond-island-phang-nga-tour",
+    photos: [
+      "https://images.unsplash.com/photo-1540202404-a2f29016b523?w=1200&q=80",
+      "https://images.unsplash.com/photo-1507525428034-b723cf961d3e?w=800",
+    ],
+    desc: "Visit the iconic Khao Phing Kan (James Bond Island) in Phang Nga Bay. Sea kayak through limestone caves, explore Koh Panyee floating village, and cruise the dramatic bay.",
+    sup: "Island Hoppers",
+    q: "Standard", dur: "Full Day", tm: "07:00", at: "Boat Tour",
+    adr: "Low", ch: "5+", pax: "Up to 20",
+    stp: "James Bond Island, Koh Panyee, Sea caves",
+    lun: "Thai lunch included", stb: "Longtail + speedboat", bv: "Open",
+    wa: "Sea kayaking, swimming", lt: "Included",
+    np: "National park fee ฿300 (payable on-site)", rating: 4.7, reviews: 489,
+  },
+  {
+    id: 3,
+    n: "Racha & Coral Island Boat Tour",
+    d: "Raya & Coral",
+    pa: 2800, pa_original: 3500, pc: 1400,
+    photo_folder: "racha-coral-island-boat-tour-premium",
+    photos: [
+      "https://images.unsplash.com/photo-1682687218147-9806132dc697?w=1200&q=80",
+      "https://images.unsplash.com/photo-1559827291-72ee739d0d9a?w=800",
+    ],
+    desc: "Discover the pristine turquoise waters of Racha Yai and Coral Island on this premium full-day boat tour. Snorkel through vibrant coral reefs, swim in crystal-clear bays, and enjoy a fresh seafood lunch on the beach.",
+    sup: "Sea Explorer Co.",
+    q: "High End", dur: "Full Day", tm: "08:00", at: "Boat Tour",
+    adr: "Medium", ch: "5+", pax: "Up to 20",
+    stp: "Racha Yai, Coral Island (Koh Hae)",
+    lun: "Seafood buffet lunch", stb: "Speedboat", bv: "Open deck",
+    wa: "Snorkeling, swimming, banana boat", lt: "None",
+    np: null, rating: 4.8, reviews: 312,
+  },
+  {
+    id: 4,
+    n: "Racha & Coral Island Yacht Cruise",
+    d: "Raya & Coral",
+    pa: 8100, pa_original: 9500, pc: 4000,
+    photo_folder: "racha-coral-island-yacht-cruise",
+    photos: [
+      "https://images.unsplash.com/photo-1540202404-a2f29016b523?w=1200&q=80",
+    ],
+    desc: "Sail to Racha and Coral Island aboard a luxury private yacht. Champagne on deck, gourmet catered meals, and exclusive snorkeling spots away from the crowds.",
+    sup: "Island Hoppers",
+    q: "Luxury", dur: "Full Day", tm: "09:00", at: "Yacht Charter",
+    adr: "Low", ch: "Any", pax: "Up to 12",
+    stp: "Racha Yai, Coral Island",
+    lun: "Gourmet lunch & drinks", stb: "Private yacht", bv: "360° panoramic",
+    wa: "Snorkeling, paddle board", lt: "None",
+    np: null, rating: 4.9, reviews: 67,
+  },
+  {
+    id: 5,
+    n: "Racha & Coral Island Catamaran Cruise",
+    d: "Raya & Coral",
+    pa: 4050, pa_original: 5000, pc: 2000,
+    photo_folder: "racha-coral-island-catamaran-cruise",
+    photos: [
+      "https://images.unsplash.com/photo-1502680390469-be75c86b636f?w=1200&q=80",
+    ],
+    desc: "Sail on a spacious catamaran to Racha and Coral islands. Perfect for groups with plenty of deck space, multiple snorkeling stops, and a delicious Thai buffet lunch.",
+    sup: "Sea Explorer Co.",
+    q: "Standard", dur: "Full Day", tm: "08:30", at: "Sailing",
+    adr: "Low", ch: "3+", pax: "Up to 30",
+    stp: "Racha Yai, Coral Island",
+    lun: "Thai buffet lunch + soft drinks", stb: "Catamaran", bv: "Wide open deck",
+    wa: "Snorkeling, swimming", lt: "None",
+    np: null, rating: 4.7, reviews: 198,
+  },
+  {
+    id: 6,
+    n: "Racha & Coral Island Boat Tour",
+    d: "Raya & Coral",
+    pa: 3200, pa_original: 4000, pc: 1600,
+    photo_folder: "racha-coral-island-boat-tour-standard",
+    photos: [
+      "https://images.unsplash.com/photo-1507525428034-b723cf961d3e?w=1200&q=80",
+    ],
+    desc: "Classic speedboat trip to Racha and Coral islands — ideal for families and first-time visitors to Phuket. Multiple beach stops and snorkeling included.",
+    sup: "Quick Ride",
+    q: "Standard", dur: "Full Day", tm: "08:00", at: "Boat Tour",
+    adr: "Low", ch: "5+", pax: "Up to 40",
+    stp: "Racha Yai, Coral Island",
+    lun: "Lunch on island", stb: "Speedboat", bv: "Open",
+    wa: "Snorkeling, swimming", lt: "None",
+    np: null, rating: 4.5, reviews: 312,
+  },
+  {
+    id: 7,
+    n: "Racha & Coral Island Boat Tour",
+    d: "Raya & Coral",
+    pa: 3000, pa_original: 3800, pc: 1500,
+    photo_folder: "racha-coral-island-boat-tour-budget",
+    photos: [
+      "https://images.unsplash.com/photo-1559827291-72ee739d0d9a?w=800",
+    ],
+    desc: "Affordable group tour to Racha and Coral islands at the best value. Snorkeling and beach time included.",
+    sup: "Quick Ride",
+    q: "Economy", dur: "Full Day", tm: "08:00", at: "Boat Tour",
+    adr: "Low", ch: "5+", pax: "Up to 50",
+    stp: "Racha Yai, Coral Island",
+    lun: "Light lunch", stb: "Speedboat", bv: "Open",
+    wa: "Snorkeling, swimming", lt: "None",
+    np: null, rating: 4.3, reviews: 445,
+  },
+  {
+    id: 8,
+    n: "Phuket Sea Adventure — Premium",
+    d: "Phuket",
+    pa: 9900, pa_original: 12000, pc: 0,
+    photo_folder: "phuket-sea-adventure-premium",
+    photos: [
+      "https://images.unsplash.com/photo-1477764250597-dffe9f601ae8?w=1200&q=80",
+    ],
+    desc: "Jet skiing, parasailing, flyboard, and banana boat fun on Phuket's best beaches. Premium package with a private instructor and all safety gear included.",
+    sup: "Sea Explorer Co.",
+    q: "Premium", dur: "Half Day", tm: "09:00", at: "Watersports",
+    adr: "High", ch: "12+", pax: "Up to 10",
+    stp: "Patong Beach activity zone",
+    lun: "Not included", stb: "Various", bv: "Open water",
+    wa: "Jet ski, parasailing, flyboard, banana boat", lt: "None",
+    np: null, rating: 4.7, reviews: 88,
+  },
+  {
+    id: 9,
+    n: "Phi Phi Islands Yacht Cruise — Luxury",
+    d: "Phi Phi",
+    pa: 8500, pa_original: 10000, pc: 4200,
+    photo_folder: "phi-phi-islands-yacht-cruise-luxury",
+    photos: [
+      "https://images.unsplash.com/photo-1559827291-72ee739d0d9a?w=1200&q=80",
+      "https://images.unsplash.com/photo-1540202404-a2f29016b523?w=800",
+    ],
+    desc: "Explore the legendary Phi Phi Islands on a luxury private yacht. Visit Maya Bay, Viking Cave, and hidden lagoons with champagne and gourmet lunch on board.",
+    sup: "Island Hoppers",
+    q: "Luxury", dur: "Full Day", tm: "09:00", at: "Yacht Charter",
+    adr: "Low", ch: "Any", pax: "Up to 12",
+    stp: "Maya Bay, Viking Cave, Monkey Beach, Phi Phi Don",
+    lun: "Gourmet seafood lunch + champagne", stb: "Private yacht", bv: "360°",
+    wa: "Snorkeling, paddle board, kayaking", lt: "None",
+    np: "National park fee ฿400 per person (payable on-site)", rating: 4.9, reviews: 54,
+  },
+  {
+    id: 10,
+    n: "Krabi (from Phuket) Yacht Cruise — Luxury",
+    d: "Krabi from Phuket",
+    pa: 8500, pa_original: 10500, pc: 4200,
+    photo_folder: "krabi-from-phuket-yacht-cruise-luxury",
+    photos: [
+      "https://images.unsplash.com/photo-1506905925346-21bda4d32df4?w=1200&q=80",
+    ],
+    desc: "Sail by luxury yacht from Phuket to Krabi's dramatic limestone karsts. Visit Hong Island lagoon, Chicken Island, and the four islands with gourmet catering.",
+    sup: "Island Hoppers",
+    q: "Luxury", dur: "Full Day", tm: "08:00", at: "Yacht Charter",
+    adr: "Low", ch: "Any", pax: "Up to 10",
+    stp: "Hong Island, Chicken Island, Four Islands",
+    lun: "Gourmet meals & open bar", stb: "Private yacht", bv: "Panoramic",
+    wa: "Snorkeling, kayaking", lt: "None",
+    np: null, rating: 4.9, reviews: 41,
+  },
+  {
+    id: 11,
+    n: "Phuket Sea Adventure — High End",
+    d: "Phuket",
+    pa: 6500, pa_original: 8000, pc: 0,
+    photo_folder: "phuket-sea-adventure-high-end",
+    photos: [
+      "https://images.unsplash.com/photo-1477764250597-dffe9f601ae8?w=1200&q=80",
+    ],
+    desc: "High-end watersports experience including jet ski, flyboard, and sea kayaking with a dedicated guide on Phuket's most beautiful beaches.",
+    sup: "Sea Explorer Co.",
+    q: "High End", dur: "Half Day", tm: "09:00", at: "Watersports",
+    adr: "High", ch: "14+", pax: "Up to 8",
+    stp: "Patong Beach",
+    lun: "Not included", stb: "Various", bv: "Open",
+    wa: "Jet ski, flyboard, sea kayaking", lt: "None",
+    np: null, rating: 4.6, reviews: 73,
+  },
+  {
+    id: 12,
+    n: "Phuket Tour",
+    d: "Phuket",
+    pa: 1900, pa_original: 2500, pc: 950,
+    photo_folder: "phuket-city-tour",
+    photos: [
+      "https://images.unsplash.com/photo-1562602833403-9f71e8c5a44e?w=1200&q=80",
+    ],
+    desc: "Explore Phuket Old Town, Big Buddha, Wat Chalong temple, and Promthep Cape viewpoint in one easy half-day city tour with hotel pickup.",
+    sup: "Island Hoppers",
+    q: "Standard", dur: "Half Day", tm: "08:00", at: "City Tour",
+    adr: "None", ch: "All ages", pax: "Up to 15",
+    stp: "Big Buddha, Wat Chalong, Old Town, Promthep Cape",
+    lun: "Not included", stb: "AC minivan", bv: "N/A",
+    wa: "None", lt: "None",
+    np: null, rating: 4.5, reviews: 267,
+  },
+  {
+    id: 13,
+    n: "Phuket Evening Show",
+    d: "Phuket",
+    pa: 1800, pa_original: 2200, pc: 900,
+    photo_folder: "phuket-evening-show",
+    photos: [
+      "https://images.unsplash.com/photo-1555400038-63f5ba517a47?w=1200&q=80",
+    ],
+    desc: "A spectacular evening of traditional Thai dance, Muay Thai demonstrations, and a buffet dinner at one of Phuket's most popular night attractions.",
+    sup: "Fantasea Phuket",
+    q: "Standard", dur: "3 Hours", tm: "18:30", at: "Show",
+    adr: "None", ch: "All ages", pax: "Up to 200",
+    stp: "Show venue, Phuket",
+    lun: "Buffet dinner included", stb: "N/A", bv: "N/A",
+    wa: "None", lt: "None",
+    np: null, rating: 4.4, reviews: 412,
+  },
+  {
+    id: 14,
+    n: "Phuket Land Adventure — High End",
+    d: "Phuket",
+    pa: 1750, pa_original: 2200, pc: 0,
+    photo_folder: "phuket-land-adventure-high-end",
+    photos: [
+      "https://images.unsplash.com/photo-1604537466608-109fa2f16c3b?w=1200&q=80",
+    ],
+    desc: "Ride ATVs through jungle trails and soar across treetops on high-speed ziplines deep in Phuket's lush interior.",
+    sup: "Island Hoppers",
+    q: "High End", dur: "Half Day", tm: "09:00", at: "Adventure",
+    adr: "High", ch: "12+", pax: "Up to 20",
+    stp: "Jungle ATV track, Zipline course",
+    lun: "Not included", stb: "ATV", bv: "Jungle",
+    wa: "None", lt: "None",
+    np: null, rating: 4.6, reviews: 156,
+  },
+  {
+    id: 15,
+    n: "Fantasea Cultural Show",
+    d: "Phuket",
+    pa: 2800, pa_original: 3500, pc: 1400,
+    photo_folder: "fantasea-cultural-show",
+    photos: [
+      "https://images.unsplash.com/photo-1555400038-63f5ba517a47?w=1200&q=80",
+    ],
+    desc: "Thailand's most spectacular cultural show with elephant performances, aerial acrobatics, magic, and a lavish Thai buffet dinner at Fantasea Phuket.",
+    sup: "Fantasea Phuket",
+    q: "High End", dur: "4 Hours", tm: "17:30", at: "Show",
+    adr: "None", ch: "All ages", pax: "Up to 3000",
+    stp: "Fantasea show complex, Kamala",
+    lun: "Thai buffet dinner included", stb: "N/A", bv: "N/A",
+    wa: "None", lt: "None",
+    np: null, rating: 4.7, reviews: 892,
+  },
+  {
+    id: 16,
+    n: "Tiger Kingdom Visit",
+    d: "Phuket",
+    pa: 900, pa_original: 1200, pc: 700,
+    photo_folder: "tiger-kingdom-phuket",
+    photos: [
+      "https://images.unsplash.com/photo-1615824996195-f780bba7cfea?w=1200&q=80",
+    ],
+    desc: "Get up close with magnificent tigers at Tiger Kingdom Phuket. Choose your tiger size — from tiny cubs to full-grown adults — and get your photo taken.",
+    sup: "Tiger Kingdom",
+    q: "Standard", dur: "2 Hours", tm: "Flexible", at: "Attraction",
+    adr: "None", ch: "All ages", pax: "Up to 50",
+    stp: "Tiger Kingdom, Kathu",
+    lun: "Not included", stb: "N/A", bv: "N/A",
+    wa: "None", lt: "None",
+    np: null, rating: 4.3, reviews: 678,
+  },
+  {
+    id: 17,
+    n: "Phuket Airport Transfer",
+    d: "Phuket",
+    pa: 800, pa_original: 800, pc: 0,
+    photo_folder: "phuket-airport-transfer",
+    photos: [
+      "https://images.unsplash.com/photo-1449965408869-eaa3f722e40d?w=1200&q=80",
+    ],
+    desc: "Private door-to-door transfer between Phuket International Airport and your hotel. Air-conditioned vehicle, meet-and-greet service, flight tracking, 60 minutes free waiting.",
+    sup: "Quick Ride",
+    q: "Standard", dur: "Custom", tm: "24/7", at: "Transfer",
+    adr: "None", ch: "All ages", pax: "Up to 8",
+    stp: "Phuket Airport ↔ Hotel",
+    lun: "Not included", stb: "Private car", bv: "N/A",
+    wa: "None", lt: "None",
+    np: null, rating: 4.9, reviews: 1240,
+  },
+  // ── KRABI ─────────────────────────────────────────────────────────────────
+  {
+    id: 18,
+    n: "4 Islands Snorkeling Tour",
+    d: "Krabi from Krabi",
+    pa: 1500, pa_original: 1900, pc: 750,
+    photo_folder: "krabi-4-islands-snorkeling",
+    photos: [
+      "https://images.unsplash.com/photo-1559827291-72ee739d0d9a?w=1200&q=80",
+    ],
+    desc: "Visit four of Krabi's most beautiful islands — Koh Mook, Koh Kradan, Koh Ngai, and Koh Cheung — including a visit to the legendary Emerald Cave.",
+    sup: "Krabi Tours",
+    q: "Standard", dur: "Full Day", tm: "08:00", at: "Boat Tour",
+    adr: "Low", ch: "5+", pax: "Up to 25",
+    stp: "Koh Mook, Koh Kradan, Koh Ngai, Emerald Cave",
+    lun: "Thai lunch included", stb: "Longtail boat", bv: "Open",
+    wa: "Snorkeling, swimming", lt: "Included",
+    np: "National park fee ฿200 (payable on-site)", rating: 4.6, reviews: 321,
+  },
+  {
+    id: 19,
+    n: "Krabi from Phuket Yacht Cruise — Luxury",
+    d: "Krabi from Phuket",
+    pa: 8500, pa_original: 10000, pc: 4200,
+    photo_folder: "krabi-from-phuket-yacht-luxury",
+    photos: [
+      "https://images.unsplash.com/photo-1506905925346-21bda4d32df4?w=1200&q=80",
+    ],
+    desc: "Luxury yacht from Phuket to Krabi's dramatic karst islands. Private charter with gourmet catering and premium open bar throughout.",
+    sup: "Island Hoppers",
+    q: "Luxury", dur: "Full Day", tm: "08:00", at: "Yacht Charter",
+    adr: "Low", ch: "Any", pax: "Up to 10",
+    stp: "Hong Island, Chicken Island, Four Islands",
+    lun: "Gourmet meals + open bar", stb: "Private yacht", bv: "Panoramic",
+    wa: "Snorkeling, kayaking", lt: "None",
+    np: null, rating: 4.8, reviews: 38,
+  },
+  // ── BANGKOK ───────────────────────────────────────────────────────────────
+  {
+    id: 20,
+    n: "Bangkok Siam Niramit Cultural Show",
+    d: "Bangkok",
+    pa: 1900, pa_original: 2400, pc: 950,
+    photo_folder: "bangkok-siam-niramit-cultural-show",
+    photos: [
+      "https://images.unsplash.com/photo-1563492065599-3520f775eeed?w=1200&q=80",
+    ],
+    desc: "Siam Niramit — Thailand's most spectacular cultural show. A breathtaking journey through 3,000 years of Thai history and tradition with 150+ performers.",
+    sup: "Fantasea Phuket",
+    q: "High End", dur: "3 Hours", tm: "19:30", at: "Show",
+    adr: "None", ch: "All ages", pax: "Up to 2000",
+    stp: "Siam Niramit Theatre, Bangkok",
+    lun: "Traditional buffet dinner", stb: "N/A", bv: "N/A",
+    wa: "None", lt: "None",
+    np: null, rating: 4.8, reviews: 267,
+  },
+  {
+    id: 21,
+    n: "Bangkok Chinatown Food Tour",
+    d: "Bangkok",
+    pa: 1800, pa_original: 2200, pc: 900,
+    photo_folder: "bangkok-chinatown-food-tour",
+    photos: [
+      "https://images.unsplash.com/photo-1555400038-63f5ba517a47?w=1200&q=80",
+    ],
+    desc: "Dive into Bangkok's legendary Yaowarat Chinatown after dark. Sample 10+ Michelin-starred street food stalls, roasted duck, dim sum, and mango sticky rice.",
+    sup: "Krabi Tours",
+    q: "Standard", dur: "3 Hours", tm: "18:00", at: "Food Tour",
+    adr: "None", ch: "All ages", pax: "Up to 12",
+    stp: "Yaowarat Road, Chinatown Bangkok",
+    lun: "All food tastings included", stb: "Walking", bv: "N/A",
+    wa: "None", lt: "None",
+    np: null, rating: 4.9, reviews: 189,
+  },
+  {
+    id: 22,
+    n: "Bangkok Grand Palace & Temples",
+    d: "Bangkok",
+    pa: 1600, pa_original: 2000, pc: 800,
+    photo_folder: "bangkok-grand-palace-temples",
+    photos: [
+      "https://images.unsplash.com/photo-1563492065599-3520f775eeed?w=1200&q=80",
+    ],
+    desc: "Explore Bangkok's most sacred sites: the Grand Palace, Emerald Buddha (Wat Phra Kaew), and the magnificent reclining Buddha at Wat Pho.",
+    sup: "Krabi Tours",
+    q: "Standard", dur: "Half Day", tm: "08:00", at: "City Tour",
+    adr: "None", ch: "All ages", pax: "Up to 15",
+    stp: "Grand Palace, Wat Phra Kaew, Wat Pho",
+    lun: "Not included", stb: "AC minivan", bv: "N/A",
+    wa: "None", lt: "None",
+    np: null, rating: 4.7, reviews: 412,
+  },
+];
+
+module.exports = TOURS;

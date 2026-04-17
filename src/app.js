@@ -12,8 +12,9 @@ app.use(cors({
   origin: [
     "http://localhost:5173",
     "https://travelx-frontend.vercel.app",
-    process.env.FRONTEND_URL,
-  ].filter(Boolean),
+    "https://www.travelx.company",
+    "https://travelx.company",
+  ],
   credentials: true,
 }));
 
